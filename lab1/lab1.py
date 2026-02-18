@@ -5,53 +5,57 @@ from scipy import stats
 np.random.seed(42)
 
 sizes = [10, 100, 1000]
+bins = ['sturges', 'fd', 'fd']
 
-for n in sizes:
-    sample = np.random.normal(0, 1, n)
+for i in range(len(sizes)):
+    sample = np.random.normal(0, 1, sizes[i])
     x = np.linspace(min(sample), max(sample), 1000)
     
     plt.figure()
-    plt.hist(sample, bins='sturges', density=True)
+    plt.hist(sample, bins=bins[i], density=True)
     plt.plot(x, stats.norm.pdf(x, 0, 1))
-    plt.title("Normal N(0,1), n = " + str(n))
+    plt.title("Normal N(0,1), n = " + str(sizes[i]))
     plt.show()
 
-for n in sizes:
-    sample = stats.cauchy.rvs(0, 1, size=n)
-    x = np.linspace(min(sample), max(sample), 1000)
+for i in range(len(sizes)):
+    left_boarder = -10
+    right_boarder = 10
+    sample = stats.cauchy.rvs(0, 1, size=sizes[i])
+    x = np.linspace(left_boarder, right_boarder, 1000)
     
     plt.figure()
-    plt.hist(sample, bins='sturges', density=True)
+    plt.xlim(left_boarder, right_boarder)
+    plt.hist(sample, bins=bins[i], density=True)
     plt.plot(x, stats.cauchy.pdf(x, 0, 1))
-    plt.title("Cauchy C(0,1), n = " + str(n))
+    plt.title("Cauchy C(0,1), n = " + str(sizes[i]))
     plt.show()
 
-for n in sizes:
-    sample = np.random.laplace(0, 1/np.sqrt(2), n)
+for i in range(len(sizes)):
+    sample = np.random.laplace(0, 1/np.sqrt(2), sizes[i])
     x = np.linspace(min(sample), max(sample), 1000)
     
     plt.figure()
-    plt.hist(sample,  bins='sturges', density=True)
+    plt.hist(sample,  bins=bins[i], density=True)
     plt.plot(x, stats.laplace.pdf(x, 0, 1/np.sqrt(2)))
-    plt.title("Laplace L(0, 1/sqrt(2)), n = " + str(n))
+    plt.title("Laplace L(0, 1/sqrt(2)), n = " + str(sizes[i]))
     plt.show()
 
-for n in sizes:
-    sample = np.random.poisson(10, n)
+for i in range(len(sizes)):
+    sample = np.random.poisson(10, sizes[i])
     x = np.arange(min(sample), max(sample)+1)
     
     plt.figure()
-    plt.hist(sample, bins='sturges', density=True)
+    plt.hist(sample, bins=bins[i], density=True)
     plt.plot(x, stats.poisson.pmf(x, 10))
-    plt.title("Poisson P(10), n = " + str(n))
+    plt.title("Poisson P(10), n = " + str(sizes[i]))
     plt.show()
 
-for n in sizes:
-    sample = np.random.uniform(-np.sqrt(3), np.sqrt(3), n)
+for i in range(len(sizes)):
+    sample = np.random.uniform(-np.sqrt(3), np.sqrt(3), sizes[i])
     x = np.linspace(min(sample), max(sample), 1000)
     
     plt.figure()
-    plt.hist(sample, bins='sturges', density=True)
+    plt.hist(sample, bins=bins[i], density=True)
     plt.plot(x, stats.uniform.pdf(x, -np.sqrt(3), 2*np.sqrt(3)))
-    plt.title("Uniform U(-sqrt(3), sqrt(3)), n = " + str(n))
+    plt.title("Uniform U(-sqrt(3), sqrt(3)), n = " + str(sizes[i]))
     plt.show()
