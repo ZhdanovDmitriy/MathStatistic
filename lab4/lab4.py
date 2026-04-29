@@ -14,7 +14,32 @@ def ecdf(sample):
     return x, y
 
 
+def get_bins_no_gaps(sample, bins, left, right):
+
+    while bins > 1:
+        hist, edges = np.histogram(
+            sample,
+            bins=bins,
+            range=(left, right)
+        )
+
+        if np.all(hist > 0):
+            return bins, edges
+
+        bins -= 1
+
+    # fallback (если вообще никак)
+    hist, edges = np.histogram(
+        sample,
+        bins=1,
+        range=(left, right)
+    )
+    return 1, edges
+
+
 def hist_cdf(sample, bins, left, right):
+
+    bins, edges = get_bins_no_gaps(sample, bins, left, right)
 
     hist, edges = np.histogram(
         sample,
@@ -29,7 +54,7 @@ def hist_cdf(sample, bins, left, right):
 
     x = edges[1:]
 
-    return x, cdf
+    return x, cdf, bins
 
 
 def kde_manual(sample, x, h):
@@ -95,7 +120,7 @@ for name, sampler, cdf, pdf, left, right in distributions:
 
         x_ecdf, y_ecdf = ecdf(sample)
 
-        x_hist, cdf_hist = hist_cdf(
+        x_hist, cdf_hist, bins_used = hist_cdf(
             sample,
             bins=15,
             left=left,
@@ -133,11 +158,13 @@ for name, sampler, cdf, pdf, left, right in distributions:
         plt.show()
 
 
+        bins_used, _ = get_bins_no_gaps(sample, 15, left, right)
+
         plt.figure()
 
         plt.hist(
             sample,
-            bins=15,
+            bins=bins_used,
             range=(left, right),
             density=True,
             alpha=0.4,
@@ -158,8 +185,7 @@ for name, sampler, cdf, pdf, left, right in distributions:
             plt.plot(
                 x,
                 y_kde,
-                label="Ядерная оценка плотности, ширина суммированных гауссов = "
-                + str(h)
+                label="Ядерная оценка плотности, ширина = " + str(h)
             )
 
         plt.xlim(left, right)
@@ -182,7 +208,7 @@ for n in sizes:
 
     x_ecdf, y_ecdf = ecdf(sample)
 
-    x_hist, cdf_hist = hist_cdf(
+    x_hist, cdf_hist, bins_used = hist_cdf(
         sample,
         bins=8,
         left=left,
@@ -225,11 +251,14 @@ for n in sizes:
     plt.show()
 
 
+    bins_used, _ = get_bins_no_gaps(sample, 8, left, right)
+
     plt.figure()
 
     plt.hist(
         sample,
-        bins=range(left, right + 2),
+        bins=bins_used,
+        range=(left, right),
         density=True,
         alpha=0.5,
         label="Гистограмма"
